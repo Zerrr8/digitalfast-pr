@@ -1143,6 +1143,7 @@
                     return result;
                 },
 
+                // UPDATED: Sort reviews by ID descending (Newest first)
                 get allReviews() {
                     return [...this.reviews].sort((a, b) => b.id - a.id);
                 },
@@ -1171,12 +1172,13 @@
                     const sv = localStorage.getItem('luthfi_vouchers');
                     this.vouchers = sv ? JSON.parse(sv) : [{code: 'WELCOME10', discount: 10}];
 
+                    // UPDATED: Sample data IDs are now chronological (1=Oldest, 4=Newest) so sorting works correctly
                     const sr = localStorage.getItem('luthfi_reviews');
                     this.reviews = sr ? JSON.parse(sr) : [
-                        { id: 1, productId: 1, name: 'Ahmad Rizki', rating: 5, comment: 'Bot WhatsAppnya sangat membantu untuk bisnis saya. Auto replynya cepat dan fiturnya lengkap!', date: '2 hari yang lalu' },
-                        { id: 2, productId: 1, name: 'Budi Santoso', rating: 5, comment: 'Pelayanan mantap, botnya works perfectly. Recommended seller!', date: '5 hari yang lalu' },
-                        { id: 3, productId: 2, name: 'Citra Dewi', rating: 4, comment: 'Bug bot saya berhasil diperbaiki dengan cepat. Terima kasih!', date: '1 minggu yang lalu' },
-                        { id: 4, productId: 3, name: 'Dedi Pratama', rating: 5, comment: 'Fitur database dan payment gateway sangat berguna. Worth it!', date: '2 minggu yang lalu' }
+                        { id: 1, productId: 1, name: 'Ahmad Rizki', rating: 5, comment: 'Bot WhatsAppnya sangat membantu untuk bisnis saya. Auto replynya cepat dan fiturnya lengkap!', date: '2 minggu yang lalu' },
+                        { id: 2, productId: 1, name: 'Budi Santoso', rating: 5, comment: 'Pelayanan mantap, botnya works perfectly. Recommended seller!', date: '1 minggu yang lalu' },
+                        { id: 3, productId: 2, name: 'Citra Dewi', rating: 4, comment: 'Bug bot saya berhasil diperbaiki dengan cepat. Terima kasih!', date: '5 hari yang lalu' },
+                        { id: 4, productId: 3, name: 'Dedi Pratama', rating: 5, comment: 'Fitur database dan payment gateway sangat berguna. Worth it!', date: '2 hari yang lalu' }
                     ];
                     
                     const ps = localStorage.getItem('luthfi_payment');
