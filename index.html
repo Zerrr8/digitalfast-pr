@@ -192,6 +192,34 @@
             background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(8px);
         }
+
+        /* Description Formatting */
+        .product-description {
+            line-height: 1.8;
+        }
+        .product-description p {
+            margin-bottom: 0.75rem;
+        }
+        .product-description strong {
+            color: #8b5cf6;
+            font-weight: 600;
+        }
+        .product-description ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0.5rem 0;
+        }
+        .product-description li {
+            padding-left: 1.5rem;
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+        .product-description li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #8b5cf6;
+        }
     </style>
 </head>
 <body x-data="storeApp()" x-init="initApp()">
@@ -392,7 +420,8 @@
                     </div>
                     <div>
                         <label class="form-label-admin">Deskripsi</label>
-                        <textarea x-model="newProduct.description" placeholder="Deskripsi produk..." class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none resize-none h-20"></textarea>
+                        <textarea x-model="newProduct.description" placeholder="Deskripsi produk..." class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none resize-none h-32"></textarea>
+                        <p class="text-[10px] text-gray-500 mt-1">Gunakan **teks** untuk bold dan enter untuk baris baru</p>
                     </div>
                     <button type="submit" class="btn-admin-primary w-full text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2">
                         <i class="fa-solid" :class="editingProductId ? 'fa-save' : 'fa-plus'"></i> <span x-text="editingProductId ? 'Update Produk' : 'Simpan Produk'"></span>
@@ -902,7 +931,7 @@
         </div>
     </div>
 
-    <!-- PRODUCT DETAIL MODAL -->
+    <!-- PRODUCT DETAIL MODAL (UPDATED WITH FORMATTED DESCRIPTION) -->
     <div x-show="isProductDetailOpen" class="fixed inset-0 z-[65] flex items-end md:items-center justify-center" x-cloak @keydown.escape.window="closeProductDetail()">
         <div class="absolute inset-0 bg-black/90 backdrop-blur-md" @click="closeProductDetail()" x-transition.opacity></div>
         <div class="relative bg-card w-full md:max-w-lg md:rounded-2xl rounded-t-2xl border-t md:border border-white/10 max-h-[90vh] overflow-y-auto animate-slide-up">
@@ -914,7 +943,8 @@
                     
                     <div>
                         <h2 class="text-xl font-bold text-white mb-2" x-text="selectedProduct.name"></h2>
-                        <p class="text-sm text-gray-400" x-text="selectedProduct.description"></p>
+                        <!-- Formatted Description -->
+                        <div class="product-description text-sm text-gray-300 mt-3" x-html="formatDescription(selectedProduct.description)"></div>
                     </div>
 
                     <!-- Product Stats -->
@@ -1064,6 +1094,21 @@
                     setTimeout(() => {
                         this.toast.show = false;
                     }, 3000);
+                },
+
+                // --- FORMAT DESCRIPTION FUNCTION ---
+                formatDescription(text) {
+                    if (!text) return '';
+                    
+                    // Convert **text** or *text* to <strong>
+                    let formatted = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+                    formatted = formatted.replace(/\*(.+?)\*/g, '<strong>$1</strong>');
+                    
+                    // Convert newlines to <br> and wrap in <p> tags for paragraphs
+                    let paragraphs = formatted.split('\n\n');
+                    formatted = paragraphs.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
+                    
+                    return formatted;
                 },
 
                 get filteredProducts() {
