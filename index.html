@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Luthfi Digital Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg: '#0b0b14',
+                        card: '#141420',
+                        cardHover: '#1a1a2e',
+                        accent: '#7c3aed',
+                        accentLight: '#8b5cf6',
+                        accentDark: '#6d28d9',
+                        surface: '#1e1e32',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        * { -webkit-tap-highlight-color: transparent; }
+        body { background: #0b0b14; color: #e2e8f0; font-family: 'Inter', sans-serif; padding-bottom: 80px; }
+        ::-webkit-scrollbar { width: 0; height: 0; }
+        [x-cloak] { display: none !important; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        @keyframes scroll-left { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .animate-marquee { animation: scroll-left 15s linear infinite; white-space: nowrap; }
+        .marquee-container:hover .animate-marquee { animation-play-state: paused; }
+
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .animate-slide-up { animation: slideUp 0.3s ease-out; }
+        .animate-fade-in { animation: fadeIn 0.2s ease-out; }
+        
+        .store-name-glow {
+            background: linear-gradient(90deg, #fff 0%, #8b5cf6 25%, #fff 50%, #8b5cf6 75%, #fff 100%);
+            background-size: 200% auto;
+            animation: shimmer 3s linear infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .store-name-bounce { animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3) translateX(-20px); opacity: 0; }
+            50% { transform: scale(1.05) translateX(5px); }
+            70% { transform: scale(0.95) translateX(-2px); }
+            100% { transform: scale(1) translateX(0); opacity: 1; }
+        }
+        
+        .nav-item.active .nav-icon { color: #8b5cf6; transform: translateY(-2px); }
+        .nav-item.active .nav-label { color: #8b5cf6; }
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 3px;
+            background: #8b5cf6;
+            border-radius: 0 0 4px 4px;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.6);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        .shake { animation: shake 0.3s ease-in-out; }
+
+        .admin-card {
+            background: linear-gradient(145deg, rgba(20,20,32,0.9), rgba(26,26,46,0.9));
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .admin-card-header {
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 20px;
+        }
+        .admin-card-header i {
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(124,58,237,0.15);
+            border-radius: 10px;
+            color: #8b5cf6;
+            font-size: 16px;
+        }
+        .admin-tab {
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        .admin-tab.active {
+            background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+            color: white;
+            box-shadow: 0 4px 15px rgba(124,58,237,0.4);
+            border-color: transparent;
+        }
+        .admin-tab:not(.active):hover {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.15);
+        }
+        .form-input-admin {
+            background: rgba(11,11,20,0.6);
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.2s ease;
+        }
+        .form-input-admin:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
+            background: rgba(11,11,20,0.8);
+        }
+        .form-label-admin {
+            font-size: 11px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .btn-admin-primary {
+            background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+            box-shadow: 0 4px 15px rgba(124,58,237,0.3);
+            transition: all 0.2s ease;
+        }
+        .btn-admin-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(124,58,237,0.5);
+        }
+        .btn-admin-secondary {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.2s ease;
+        }
+        .btn-admin-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+        }
+        .product-item-admin {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.2s ease;
+        }
+        .product-item-admin:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.1);
+        }
+        .section-fade-enter { opacity: 0; transform: translateY(10px); }
+        .section-fade-enter-active { opacity: 1; transform: translateY(0); transition: all 0.25s ease; }
+
+        .review-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+        .review-card:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+        .avatar-placeholder {
+            background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+        }
+
+        /* QRIS Modal Styles */
+        .qris-modal-bg {
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body x-data="storeApp()" x-init="initApp()">
+
+    <!-- TOAST NOTIFICATION (PROFESSIONAL) -->
+    <div x-show="toast.show" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-10" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-10" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3 min-w-[250px] justify-center" :class="toast.type === 'success' ? 'bg-green-600 text-white' : (toast.type === 'error' ? 'bg-red-600 text-white' : 'bg-accent text-white')">
+        <i class="fa-solid fa-circle-check text-xl" x-show="toast.type === 'success'"></i>
+        <i class="fa-solid fa-circle-exclamation text-xl" x-show="toast.type === 'error'"></i>
+        <i class="fa-solid fa-info-circle text-xl" x-show="toast.type === 'info'"></i>
+        <span class="font-medium text-sm" x-text="toast.message"></span>
+    </div>
+
+    <!-- RUNNING TEXT / MARQUEE -->
+    <div class="bg-accent/10 border-b border-accent/20 overflow-hidden relative h-10 flex items-center" x-show="!isAdmin && settings.marqueeText">
+        <div class="marquee-container absolute inset-0 flex items-center">
+            <div class="animate-marquee text-xs text-accentLight font-medium px-4 flex items-center gap-2">
+                <i class="fa-brands fa-whatsapp"></i>
+                <span x-text="settings.marqueeText"></span>
+                <span class="mx-4">•</span>
+                <i class="fa-brands fa-whatsapp"></i>
+                <span x-text="settings.marqueeText"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER WITH STORE NAME -->
+    <header class="sticky top-0 z-40 bg-bg/95 backdrop-blur-xl border-b border-white/5 px-4 py-3 transition-all duration-300" x-show="!isAdmin">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-purple-700 flex items-center justify-center shadow-lg shadow-accent/30 store-name-bounce">
+                    <span class="text-white font-black text-sm">LD</span>
+                </div>
+                <div class="store-name-bounce" style="animation-delay: 0.1s">
+                    <h1 class="text-white font-bold text-base leading-tight store-name-glow" x-text="settings.shopName || 'Luthfi Shop'"></h1>
+                    <p class="text-[10px] text-gray-400 leading-tight" x-text="settings.shopTagline || 'Praktis, Otomatis, Dan Cepat'"></p>
+                </div>
+            </div>
+            <button @click="openPasswordModal()" class="w-9 h-9 rounded-xl bg-surface flex items-center justify-center text-gray-400 hover:text-accent transition shadow-lg shadow-black/20">
+                <i class="fa-solid fa-gear text-sm"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- ADMIN PANEL -->
+    <div x-show="isAdmin" class="min-h-screen bg-bg px-4 py-4" x-cloak>
+        <div class="flex items-center justify-between mb-6 sticky top-0 bg-bg z-20 py-2">
+            <div>
+                <h1 class="text-xl font-bold text-white">Admin Panel</h1>
+                <p class="text-xs text-gray-400">Kelola tampilan & produk</p>
+            </div>
+            <button @click="exitAdmin()" class="bg-surface text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-red-500/20 hover:text-red-400 transition border border-white/10 flex items-center gap-2">
+                <i class="fa-solid fa-right-from-bracket"></i> Exit Admin
+            </button>
+        </div>
+
+        <!-- Admin Tabs -->
+        <div class="flex gap-2 mb-6 overflow-x-auto hide-scroll pb-2">
+            <button @click="adminTab = 'general'" :class="adminTab === 'general' ? 'active' : ''" class="admin-tab px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap border border-white/10 bg-surface text-gray-400">Umum</button>
+            <button @click="adminTab = 'security'" :class="adminTab === 'security' ? 'active' : ''" class="admin-tab px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap border border-white/10 bg-surface text-gray-400">Keamanan</button>
+            <button @click="adminTab = 'popup'" :class="adminTab === 'popup' ? 'active' : ''" class="admin-tab px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap border border-white/10 bg-surface text-gray-400">Popup Info</button>
+            <button @click="adminTab = 'products'" :class="adminTab === 'products' ? 'active' : ''" class="admin-tab px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap border border-white/10 bg-surface text-gray-400">Produk</button>
+            <button @click="adminTab = 'vouchers'" :class="adminTab === 'vouchers' ? 'active' : ''" class="admin-tab px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap border border-white/10 bg-surface text-gray-400">Voucher</button>
+            <button @click="adminTab = 'payment'" :class="adminTab === 'payment' ? 'active' : ''" class="admin-tab px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap border border-white/10 bg-surface text-gray-400">Pembayaran</button>
+            <button @click="adminTab = 'reviews'" :class="adminTab === 'reviews' ? 'active' : ''" class="admin-tab px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap border border-white/10 bg-surface text-gray-400">Ulasan</button>
+        </div>
+
+        <!-- General Settings Tab -->
+        <div x-show="adminTab === 'general'" x-transition:enter="section-fade-enter" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-4">
+            <div class="admin-card rounded-2xl p-5">
+                <div class="admin-card-header flex items-center gap-3">
+                    <i class="fa-solid fa-store"></i>
+                    <span class="text-sm font-bold text-white">Identitas Toko</span>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="form-label-admin">Nama Toko</label>
+                        <input x-model="settings.shopName" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="form-label-admin">Tagline</label>
+                        <input x-model="settings.shopTagline" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition">
+                    </div>
+                </div>
+            </div>
+            <div class="admin-card rounded-2xl p-5">
+                <div class="admin-card-header flex items-center gap-3">
+                    <i class="fa-solid fa-arrow-right-long"></i>
+                    <span class="text-sm font-bold text-white">Running Text</span>
+                </div>
+                <textarea x-model="settings.marqueeText" placeholder="Teks Berjalan..." class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition mb-4 resize-none h-20"></textarea>
+                <button @click="saveSettings()" class="btn-admin-primary w-full text-white text-xs font-bold py-3 rounded-xl">Simpan Teks</button>
+            </div>
+             <div class="admin-card rounded-2xl p-5">
+                <div class="admin-card-header flex items-center gap-3">
+                    <i class="fa-solid fa-image"></i>
+                    <span class="text-sm font-bold text-white">Hero Banner Image Only</span>
+                </div>
+                <input x-model="settings.heroImage" type="text" placeholder="URL Gambar Banner (16:9)" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition mb-4">
+                <button @click="saveSettings()" class="btn-admin-primary w-full text-white text-xs font-bold py-3 rounded-xl">Simpan Banner</button>
+            </div>
+        </div>
+
+        <!-- Security Tab -->
+        <div x-show="adminTab === 'security'" x-transition:enter="section-fade-enter" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-4">
+            <div class="admin-card rounded-2xl p-5">
+                <div class="admin-card-header flex items-center gap-3">
+                    <i class="fa-solid fa-lock"></i>
+                    <span class="text-sm font-bold text-white">Ganti Password Admin</span>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="form-label-admin">Password Lama</label>
+                        <input x-model="passwordForm.old" type="password" placeholder="Masukkan password lama" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="form-label-admin">Password Baru</label>
+                        <input x-model="passwordForm.new" type="password" placeholder="Minimal 4 karakter" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="form-label-admin">Konfirmasi Password Baru</label>
+                        <input x-model="passwordForm.confirm" type="password" placeholder="Ulangi password baru" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition">
+                    </div>
+                    <button @click="changePassword()" class="btn-admin-primary w-full text-white text-xs font-bold py-3 rounded-xl">Ganti Password</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Popup Settings Tab -->
+        <div x-show="adminTab === 'popup'" x-transition:enter="section-fade-enter" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-4">
+            <div class="admin-card rounded-2xl p-5">
+                <div class="admin-card-header flex items-center gap-3">
+                    <i class="fa-solid fa-window-maximize"></i>
+                    <span class="text-sm font-bold text-white">Welcome Popup</span>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="form-label-admin">Judul Popup</label>
+                        <input x-model="popupSettings.title" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="form-label-admin">Pesan Sambutan</label>
+                        <textarea x-model="popupSettings.message" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none resize-none h-20"></textarea>
+                    </div>
+                    <div>
+                        <label class="form-label-admin">URL Gambar Popup</label>
+                        <input x-model="popupSettings.image" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none">
+                    </div>
+                    <button @click="savePopupSettings()" class="btn-admin-primary w-full text-white text-xs font-bold py-3 rounded-xl">Simpan Popup</button>
+                    <button @click="resetPopupPreference()" class="btn-admin-secondary w-full text-red-400 text-xs font-bold py-3 rounded-xl mt-2 hover:bg-red-500/10">Reset "Jangan Tampilkan Lagi"</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Tab -->
+        <div x-show="adminTab === 'products'" x-transition:enter="section-fade-enter" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-4">
+            <div class="admin-card rounded-2xl p-5">
+                <div class="admin-card-header flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid" :class="editingProductId ? 'fa-pen' : 'fa-plus'"></i>
+                        <span class="text-sm font-bold text-white" x-text="editingProductId ? 'Edit Produk' : 'Tambah Produk'"></span>
+                    </div>
+                    <button x-show="editingProductId" @click="cancelEditProduct()" class="text-xs text-gray-400 hover:text-white"><i class="fa-solid fa-times mr-1"></i> Batal</button>
+                </div>
+                <form @submit.prevent="addProduct" class="space-y-4">
+                    <div>
+                        <label class="form-label-admin">Nama Produk</label>
+                        <input x-model="newProduct.name" type="text" placeholder="Nama Produk" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="form-label-admin">Kategori</label>
+                            <select x-model="newProduct.category" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-gray-300 focus:outline-none">
+                                <option value="bot">WhatsApp Bot</option>
+                                <option value="service">Jasa Service</option>
+                                <option value="feature">Add Feature</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label-admin">Harga (IDR)</label>
+                            <input x-model="newProduct.price" type="number" placeholder="0" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none" required>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="form-label-admin">Rating (1-5)</label>
+                            <input x-model="newProduct.rating" type="number" step="0.1" min="1" max="5" placeholder="5.0" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="form-label-admin">Jumlah Terjual</label>
+                            <input x-model="newProduct.sales" type="number" placeholder="0" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label-admin">URL Gambar</label>
+                        <input x-model="newProduct.image" type="text" placeholder="https://..." class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="form-label-admin">Deskripsi</label>
+                        <textarea x-model="newProduct.description" placeholder="Deskripsi produk..." class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none resize-none h-20"></textarea>
+                    </div>
+                    <button type="submit" class="btn-admin-primary w-full text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid" :class="editingProductId ? 'fa-save' : 'fa-plus'"></i> <span x-text="editingProductId ? 'Update Produk' : 'Simpan Produk'"></span>
+                    </button>
+                </form>
+            </div>
+            <div class="admin-card rounded-2xl p-5">
+                <div class="admin-card-header flex items-center gap-3">
+                    <i class="fa-solid fa-list"></i>
+                    <span class="text-sm font-bold text-white">Daftar Produk</span>
+                </div>
+                <div class="space-y-2">
+                    <template x-for="(prod, index) in products" :key="prod.id">
+                        <div class="product-item-admin rounded-xl p-3 flex items-center gap-3">
+                            <img :src="prod.image || 'https://via.placeholder.com/60'" class="w-12 h-12 rounded-lg object-cover bg-bg">
+                            <div class="flex-1 min-w-0">
+                                <h4 class="text-sm font-semibold text-white truncate" x-text="prod.name"></h4>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <p class="text-xs text-accent font-bold" x-text="formatRupiah(prod.price)"></p>
+                                    <span class="text-[10px] text-gray-500">•</span>
+                                    <span class="text-[10px] text-yellow-400">
+                                        <i class="fa-solid fa-star text-[8px]"></i> <span x-text="prod.rating || 0"></span>
+                                    </span>
+                                    <span class="text-[10px] text-green-400">
+                                        <i class="fa-solid fa-bag-shopping text-[8px]"></i> <span x-text="prod.sales || 0"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button @click="editProduct(prod)" class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center hover:bg-blue-500/20 transition">
+                                    <i class="fa-solid fa-pen text-xs"></i>
+                                </button>
+                                <button @click="deleteProduct(index)" class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center hover:bg-red-500/20 transition">
+                                    <i class="fa-solid fa-trash text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vouchers Tab -->
+        <div x-show="adminTab === 'vouchers'" x-transition:enter="section-fade-enter" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-4">
+            <div class="admin-card rounded-2xl p-5">
+                <div class="admin-card-header flex items-center gap-3">
+                    <i class="fa-solid fa-ticket"></i>
+                    <span class="text-sm font-bold text-white">Tambah Voucher</span>
+                </div>
+                <form @submit.prevent="addVoucher" class="flex gap-2">
+                    <input x-model="newVoucher.code" type="text" placeholder="Kode" class="form-input-admin flex-1 rounded-xl px-4 py-3 text-sm text-white focus:outline-none uppercase" required>
+                    <input x-model="newVoucher.discount" type="number" placeholder="%" class="form-input-admin w-20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none" required>
+                    <button type="submit" class="bg-green-600 text-white px-4 rounded-xl hover:bg-green-700 transition flex items-center justify-center">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </form>
+            </div>
+            <div class="admin-card rounded-2xl p-5">
+                <div class="admin-card-header flex items-center gap-3">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span class="text-sm font-bold text-white">Voucher Aktif</span>
+                </div>
+                <div class="space-y-2">
+                    <template x-for="(v, i) in vouchers" :key="i">
+                        <div class="product-item-admin rounded-xl p-3 flex items-center justify-between">
+                            <div>
+                                <span class="text-sm font-bold text-accentLight" x-text="v.code"></span>
+                                <span class="text-xs text-gray-400 ml-2" x-text="'-' + v.discount + '%'"></span>
+                            </div>
+                            <button @click="deleteVoucher(i)" class="text-red-400 text-xs hover:text-red-300 transition">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Tab (REDESIGNED) -->
+        <div x-show="adminTab === 'payment'" x-transition:enter="section-fade-enter" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-5">
+            
+            <!-- E-Wallet & Bank Section -->
+            <div class="admin-card rounded-2xl p-5 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+                <div class="admin-card-header flex items-center gap-3 relative z-10">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+                        <i class="fa-solid fa-wallet text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="text-sm font-bold text-white block">Metode Pembayaran</span>
+                        <span class="text-[10px] text-gray-400">Atur nomor e-wallet & bank transfer</span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 relative z-10">
+                    <!-- Dana -->
+                    <div class="bg-bg/50 p-3 rounded-xl border border-white/5">
+                        <label class="form-label-admin flex items-center gap-2"><i class="fa-solid fa-wallet text-blue-400 text-[10px]"></i> DANA</label>
+                        <input x-model="paymentSettings.dana" class="form-input-admin w-full rounded-lg px-3 py-2 text-xs text-white focus:outline-none bg-transparent border-white/5">
+                    </div>
+                    <!-- GoPay -->
+                    <div class="bg-bg/50 p-3 rounded-xl border border-white/5">
+                        <label class="form-label-admin flex items-center gap-2"><i class="fa-solid fa-wallet text-blue-500 text-[10px]"></i> GOPAY</label>
+                        <input x-model="paymentSettings.gopay" class="form-input-admin w-full rounded-lg px-3 py-2 text-xs text-white focus:outline-none bg-transparent border-white/5">
+                    </div>
+                    <!-- SeaBank -->
+                    <div class="bg-bg/50 p-3 rounded-xl border border-white/5">
+                        <label class="form-label-admin flex items-center gap-2"><i class="fa-solid fa-building-columns text-teal-400 text-[10px]"></i> SEABANK</label>
+                        <input x-model="paymentSettings.seabank" class="form-input-admin w-full rounded-lg px-3 py-2 text-xs text-white focus:outline-none bg-transparent border-white/5">
+                    </div>
+                    <!-- BCA -->
+                    <div class="bg-bg/50 p-3 rounded-xl border border-white/5">
+                        <label class="form-label-admin flex items-center gap-2"><i class="fa-solid fa-building-columns text-blue-300 text-[10px]"></i> BCA</label>
+                        <input x-model="paymentSettings.bca" class="form-input-admin w-full rounded-lg px-3 py-2 text-xs text-white focus:outline-none bg-transparent border-white/5">
+                    </div>
+                </div>
+            </div>
+
+            <!-- QRIS Section (REDESIGNED) -->
+            <div class="admin-card rounded-2xl p-5 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-32 h-32 bg-purple-500/5 rounded-full blur-3xl -ml-10 -mt-10 pointer-events-none"></div>
+                <div class="admin-card-header flex items-center justify-between relative z-10">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/20">
+                            <i class="fa-solid fa-qrcode text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-white block">Konfigurasi QRIS</span>
+                            <span class="text-[10px] text-gray-400">Upload gambar & deskripsi</span>
+                        </div>
+                    </div>
+                    <!-- View QRIS Button -->
+                    <button @click="viewQris()" x-show="paymentSettings.qrisImage" class="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white px-3 py-2 rounded-lg text-xs font-semibold transition border border-white/10">
+                        <i class="fa-solid fa-eye text-accentLight"></i> View QRIS
+                    </button>
+                </div>
+                
+                <div class="space-y-4 relative z-10">
+                    <div>
+                        <label class="form-label-admin">URL Gambar QRIS</label>
+                        <div class="flex gap-2">
+                            <input x-model="paymentSettings.qrisImage" type="text" placeholder="https://... (Imgur/Top4Top)" class="form-input-admin flex-1 rounded-xl px-4 py-3 text-sm text-white focus:outline-none">
+                            <div x-show="paymentSettings.qrisImage" class="w-12 h-12 rounded-xl bg-bg border border-white/10 overflow-hidden shrink-0 cursor-pointer hover:border-accent transition" @click="viewQris()">
+                                <img :src="paymentSettings.qrisImage" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label-admin">Keterangan (Opsional)</label>
+                        <input x-model="paymentSettings.qrisDesc" type="text" placeholder="Contoh: Scan via Dana/GoPay" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none">
+                    </div>
+                    <button @click="savePaymentSettings()" class="btn-admin-primary w-full text-white text-xs font-bold py-3 rounded-xl shadow-lg shadow-accent/20">
+                        <i class="fa-solid fa-save mr-2"></i> Simpan Perubahan
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Tab -->
+        <div x-show="adminTab === 'reviews'" x-transition:enter="section-fade-enter" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-4">
+            <!-- Review Form -->
+            <div class="admin-card rounded-2xl p-5">
+                <div class="admin-card-header flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid" :class="editingReviewId ? 'fa-pen' : 'fa-plus'"></i>
+                        <span class="text-sm font-bold text-white" x-text="editingReviewId ? 'Edit Ulasan' : 'Tambah Ulasan'"></span>
+                    </div>
+                    <button x-show="editingReviewId" @click="cancelEditReview()" class="text-xs text-gray-400 hover:text-white"><i class="fa-solid fa-times mr-1"></i> Batal</button>
+                </div>
+                <form @submit.prevent="addReview" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="form-label-admin">Nama Pembeli</label>
+                            <input x-model="newReview.name" type="text" placeholder="Nama" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none" required>
+                        </div>
+                        <div>
+                            <label class="form-label-admin">Produk</label>
+                            <select x-model="newReview.productId" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-gray-300 focus:outline-none" required>
+                                <option value="" disabled>Pilih Produk</option>
+                                <template x-for="prod in products" :key="prod.id">
+                                    <option :value="prod.id" x-text="prod.name"></option>
+                                </template>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="form-label-admin">Rating (1-5)</label>
+                            <input x-model="newReview.rating" type="number" min="1" max="5" placeholder="5" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none" required>
+                        </div>
+                        <div>
+                            <label class="form-label-admin">Tanggal</label>
+                            <input x-model="newReview.date" type="text" placeholder="2 hari yang lalu" class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label-admin">Komentar</label>
+                        <textarea x-model="newReview.comment" placeholder="Tulis ulasan..." class="form-input-admin w-full rounded-xl px-4 py-3 text-sm text-white focus:outline-none resize-none h-20" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-admin-primary w-full text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid" :class="editingReviewId ? 'fa-save' : 'fa-plus'"></i> <span x-text="editingReviewId ? 'Update Ulasan' : 'Simpan Ulasan'"></span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Review List -->
+            <div class="admin-card rounded-2xl p-5">
+                <div class="admin-card-header flex items-center gap-3">
+                    <i class="fa-solid fa-comments"></i>
+                    <span class="text-sm font-bold text-white">Daftar Ulasan</span>
+                </div>
+                <div class="space-y-3">
+                    <template x-for="(review, index) in allReviews" :key="index">
+                        <div class="product-item-admin rounded-xl p-4">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full avatar-placeholder flex items-center justify-center text-white font-bold text-sm" x-text="review.name.charAt(0).toUpperCase()"></div>
+                                    <div>
+                                        <h4 class="text-sm font-semibold text-white" x-text="review.name"></h4>
+                                        <p class="text-xs text-gray-400" x-text="getProductNameById(review.productId)"></p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <template x-for="i in 5">
+                                        <i class="fa-solid fa-star text-xs" :class="i <= review.rating ? 'text-yellow-400' : 'text-gray-600'"></i>
+                                    </template>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-300 mb-3" x-text="review.comment"></p>
+                            <div class="flex items-center justify-end gap-2">
+                                <button @click="editReview(review)" class="text-blue-400 text-xs hover:text-blue-300 transition flex items-center gap-1">
+                                    <i class="fa-solid fa-pen"></i> Edit
+                                </button>
+                                <button @click="deleteReview(index)" class="text-red-400 text-xs hover:text-red-300 transition flex items-center gap-1">
+                                    <i class="fa-solid fa-trash"></i> Hapus
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                    <div x-show="allReviews.length === 0" class="text-center py-8 text-gray-500 text-sm">
+                        <i class="fa-solid fa-inbox text-2xl mb-2"></i>
+                        <p>Belum ada ulasan</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STOREFRONT -->
+    <div x-show="!isAdmin" x-transition.opacity.duration.300ms>
+        
+        <!-- Hero Banner -->
+        <div class="px-4 mt-4 mb-6" data-aos="fade-up">
+            <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-card border border-white/5 group shadow-2xl shadow-accent/5">
+                <img x-show="settings.heroImage" :src="settings.heroImage" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                <div x-show="!settings.heroImage" class="absolute inset-0 flex items-center justify-center text-gray-600 text-xs">Banner Image Placeholder</div>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="px-4 mb-5" data-aos="fade-up" data-aos-delay="50">
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-500 text-sm"></i>
+                <input type="text" x-model="searchQuery" placeholder="Cari produk..." class="w-full bg-card border border-white/5 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:border-accent focus:outline-none focus:bg-cardHover transition placeholder-gray-500">
+            </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="px-4 mb-5" data-aos="fade-up" data-aos-delay="100">
+            <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-grid-2 text-accent text-xs"></i> KATEGORI</h3>
+            <div class="flex gap-2 overflow-x-auto hide-scroll pb-1">
+                <button @click="filterCategory = 'all'" :class="filterCategory === 'all' ? 'bg-accent text-white border-accent shadow-lg shadow-accent/30' : 'bg-card text-gray-400 border-white/5'" class="px-5 py-2.5 rounded-xl border text-xs font-semibold whitespace-nowrap transition flex items-center gap-2 shrink-0"><i class="fa-solid fa-border-all text-[10px]"></i> Semua</button>
+                <button @click="filterCategory = 'bot'" :class="filterCategory === 'bot' ? 'bg-accent text-white border-accent shadow-lg shadow-accent/30' : 'bg-card text-gray-400 border-white/5'" class="px-5 py-2.5 rounded-xl border text-xs font-semibold whitespace-nowrap transition flex items-center gap-2 shrink-0"><i class="fa-brands fa-whatsapp text-[10px]"></i> Bot WA</button>
+                <button @click="filterCategory = 'service'" :class="filterCategory === 'service' ? 'bg-accent text-white border-accent shadow-lg shadow-accent/30' : 'bg-card text-gray-400 border-white/5'" class="px-5 py-2.5 rounded-xl border text-xs font-semibold whitespace-nowrap transition flex items-center gap-2 shrink-0"><i class="fa-solid fa-wrench text-[10px]"></i> Jasa Service</button>
+                <button @click="filterCategory = 'feature'" :class="filterCategory === 'feature' ? 'bg-accent text-white border-accent shadow-lg shadow-accent/30' : 'bg-card text-gray-400 border-white/5'" class="px-5 py-2.5 rounded-xl border text-xs font-semibold whitespace-nowrap transition flex items-center gap-2 shrink-0"><i class="fa-solid fa-puzzle-piece text-[10px]"></i> Add Feature</button>
+            </div>
+        </div>
+
+        <!-- Products Section -->
+        <div class="px-4 mb-6" data-aos="fade-up" data-aos-delay="150">
+            <div class="flex items-center justify-between mb-3"><h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-fire text-orange-400 text-xs"></i> PRODUK</h3></div>
+            
+            <div x-show="discountMessage" class="mb-4 p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-xs flex items-center gap-2 animate-fade-in">
+                <i class="fa-solid fa-check-circle"></i> <span x-text="discountMessage"></span>
+                <button @click="activeDiscount = 0; discountMessage = ''" class="ml-auto text-green-400 hover:text-white"><i class="fa-solid fa-times"></i></button>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                <template x-for="prod in filteredProducts" :key="prod.id">
+                    <div class="bg-card rounded-2xl overflow-hidden border border-white/5 card-glow transition-all duration-300 hover:border-accent/30 hover:-translate-y-1 group" data-aos="fade-up">
+                        <div class="absolute top-2 right-2 z-10"><span class="inline-flex items-center gap-1 bg-green-500/10 border border-green-500/20 px-2 py-1 rounded-lg backdrop-blur-md"><div class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></div><span class="text-[10px] font-bold text-green-400">Tersedia</span></span></div>
+                        <div class="relative h-32 md:h-36 bg-bg overflow-hidden cursor-pointer" @click="openProductDetail(prod)">
+                            <img :src="prod.image || 'https://via.placeholder.com/300x200/141420/7c3aed?text=Product'" alt="" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-80"></div>
+                        </div>
+                        <div class="p-3">
+                            <h4 class="text-sm font-bold text-white line-clamp-1 mb-1 cursor-pointer" x-text="prod.name" @click="openProductDetail(prod)"></h4>
+                            <p class="text-[10px] text-gray-500 line-clamp-2 mb-3" x-text="prod.description || 'Digital product premium berkualitas'"></p>
+                            
+                            <!-- Rating & Sales Summary -->
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="flex items-center gap-0.5">
+                                    <template x-for="i in 5">
+                                        <i class="fa-solid fa-star text-[10px]" :class="i <= (prod.rating || 0) ? 'text-yellow-400' : 'text-gray-600'"></i>
+                                    </template>
+                                </div>
+                                <span class="text-[10px] text-gray-400">
+                                    <i class="fa-solid fa-bag-shopping text-[8px] mr-1"></i>
+                                    <span x-text="prod.sales || 0"></span> Terjual
+                                </span>
+                            </div>
+                            
+                            <div class="flex items-end justify-between">
+                                <div>
+                                    <span class="text-xs font-black text-accentLight" x-text="formatRupiah(calculatePrice(prod.price))"></span>
+                                    <span x-show="activeDiscount > 0" class="text-[9px] text-green-400 block">Disc Applied</span>
+                                </div>
+                                <button @click="openPaymentModal(prod)" class="w-8 h-8 rounded-xl bg-accent text-white flex items-center justify-center hover:bg-accentDark transition shadow-lg shadow-accent/20 active:scale-90"><i class="fa-solid fa-bag-shopping text-xs"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            <div x-show="filteredProducts.length === 0" class="text-center py-16"><div class="w-16 h-16 bg-card rounded-2xl flex items-center justify-center mx-auto mb-3 text-gray-600"><i class="fa-solid fa-box-open text-2xl"></i></div><p class="text-gray-500 text-sm">Produk tidak ditemukan</p></div>
+        </div>
+
+        <!-- Reviews Section - Hidden by Default with Toggle Button -->
+        <div class="px-4 mb-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="text-center mb-4">
+                <button @click="showReviews = !showReviews" class="inline-flex items-center gap-2 bg-gradient-to-r from-accent to-accentLight text-white px-6 py-3 rounded-xl font-semibold text-sm hover:shadow-lg hover:shadow-accent/30 transition-all duration-300 transform hover:-translate-y-0.5">
+                    <i class="fa-solid fa-comments" x-show="!showReviews"></i>
+                    <i class="fa-solid fa-chevron-up" x-show="showReviews"></i>
+                    <span x-text="showReviews ? 'Tutup Ulasan' : 'Lihat Ulasan Pembeli'"></span>
+                    <span class="bg-white/20 px-2 py-0.5 rounded-full text-xs" x-text="allReviews.length" x-show="!showReviews"></span>
+                </button>
+            </div>
+            
+            <div x-show="showReviews" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-95" class="space-y-3">
+                <template x-for="review in allReviews" :key="review.id">
+                    <div class="review-card rounded-xl p-4">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-full avatar-placeholder flex items-center justify-center text-white font-bold text-sm shrink-0" x-text="review.name.charAt(0).toUpperCase()"></div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between mb-1">
+                                    <h4 class="text-sm font-semibold text-white" x-text="review.name"></h4>
+                                    <div class="flex items-center gap-0.5">
+                                        <template x-for="i in 5">
+                                            <i class="fa-solid fa-star text-xs" :class="i <= review.rating ? 'text-yellow-400' : 'text-gray-600'"></i>
+                                        </template>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-400 mb-2" x-text="getProductNameById(review.productId)"></p>
+                                <p class="text-xs text-gray-300 leading-relaxed" x-text="review.comment"></p>
+                                <p class="text-[10px] text-gray-500 mt-2" x-text="review.date"></p>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <div x-show="allReviews.length === 0" class="text-center py-12 text-gray-500">
+                    <i class="fa-solid fa-inbox text-3xl mb-3 opacity-50"></i>
+                    <p class="text-sm">Belum ada ulasan pembeli</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="h-20"></div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-bg/95 backdrop-blur-xl border-t border-white/5 px-4 py-2" x-show="!isAdmin">
+        <div class="flex items-center justify-around max-w-md mx-auto">
+            <button @click="activeTab = 'home'; scrollToTop()" :class="activeTab === 'home' ? 'active' : ''" class="nav-item flex flex-col items-center gap-1 py-2 px-6 rounded-2xl transition-all duration-200 hover:bg-white/5">
+                <i class="nav-icon fa-solid fa-house text-lg transition-transform duration-200 text-gray-500"></i>
+                <span class="nav-label text-[10px] font-semibold transition-colors duration-200 text-gray-500">Beranda</span>
+            </button>
+            <button @click="activeTab = 'search'; document.getElementById('products')?.scrollIntoView({behavior:'smooth'})" :class="activeTab === 'search' ? 'active' : ''" class="nav-item flex flex-col items-center gap-1 py-2 px-6 rounded-2xl transition-all duration-200 hover:bg-white/5">
+                <i class="nav-icon fa-solid fa-magnifying-glass text-lg transition-transform duration-200 text-gray-500"></i>
+                <span class="nav-label text-[10px] font-semibold transition-colors duration-200 text-gray-500">Cari</span>
+            </button>
+            <button @click="activeTab = 'top'" :class="activeTab === 'top' ? 'active' : ''" class="nav-item flex flex-col items-center gap-1 py-2 px-6 rounded-2xl transition-all duration-200 hover:bg-white/5">
+                <i class="nav-icon fa-solid fa-trophy text-lg transition-transform duration-200 text-gray-500"></i>
+                <span class="nav-label text-[10px] font-semibold transition-colors duration-200 text-gray-500">Top</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- PASSWORD MODAL -->
+    <div x-show="showPasswordModal" class="fixed inset-0 z-[80] flex items-center justify-center px-4" x-cloak @keydown.escape.window="closePasswordModal()">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-md" x-transition.opacity></div>
+        <div class="relative bg-card w-full max-w-sm rounded-3xl border border-white/10 overflow-hidden shadow-2xl shadow-accent/20 animate-slide-up" :class="{ 'shake': passwordError }">
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-accent/20">
+                    <i class="fa-solid fa-lock text-2xl text-accentLight"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-1">Admin Access</h3>
+                <p class="text-xs text-gray-400 mb-6">Masukkan password untuk melanjutkan</p>
+                
+                <div class="relative mb-4">
+                    <input x-model="passwordInput" type="password" placeholder="Password" @keyup.enter="verifyPassword()" class="w-full bg-bg border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white focus:border-accent focus:outline-none transition text-center tracking-widest font-mono" :class="{ 'border-red-500': passwordError }">
+                </div>
+                
+                <p x-show="passwordError" class="text-red-400 text-xs mb-4 animate-fade-in"><i class="fa-solid fa-circle-exclamation mr-1"></i> Password salah! Coba lagi.</p>
+                
+                <div class="flex gap-3">
+                    <button @click="closePasswordModal()" class="flex-1 bg-surface text-white text-sm font-bold py-3 rounded-xl hover:bg-white/10 transition border border-white/10">Batal</button>
+                    <button @click="verifyPassword()" class="flex-1 bg-accent text-white text-sm font-bold py-3 rounded-xl hover:bg-accentDark transition shadow-lg shadow-accent/30">Masuk</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WELCOME POPUP MODAL -->
+    <div x-show="showWelcomePopup" class="fixed inset-0 z-[70] flex items-center justify-center px-4" x-cloak @keydown.escape.window="closeWelcomePopup()">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-md" x-transition.opacity></div>
+        <div class="relative bg-card w-full max-w-sm rounded-3xl border border-white/10 overflow-hidden shadow-2xl shadow-accent/20 animate-slide-up">
+            <button @click="closeWelcomePopup()" class="absolute top-3 right-3 z-20 w-8 h-8 bg-black/50 rounded-full text-white flex items-center justify-center hover:bg-accent transition"><i class="fa-solid fa-times"></i></button>
+            <div class="w-full h-48 bg-bg relative">
+                <img x-show="popupSettings.image" :src="popupSettings.image" class="w-full h-full object-cover">
+                <div x-show="!popupSettings.image" class="w-full h-full flex items-center justify-center text-gray-600 text-xs">Popup Image Placeholder</div>
+                <div class="absolute inset-0 bg-gradient-to-t from-card to-transparent"></div>
+            </div>
+            <div class="p-6 -mt-12 relative z-10">
+                <h2 class="text-2xl font-bold text-white mb-2 drop-shadow-md" x-text="popupSettings.title || 'Welcome Guys'"></h2>
+                <p class="text-gray-300 text-sm leading-relaxed mb-6" x-text="popupSettings.message || 'Dikulum dikunyah, asalamualaikum semuanyaa'"></p>
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" x-model="dontShowAgain" class="w-4 h-4 rounded border-gray-600 text-accent focus:ring-accent bg-bg">
+                        <span class="text-xs text-gray-400">Jangan tampilkan lagi</span>
+                    </label>
+                    <button @click="closeWelcomePopup()" class="bg-accent hover:bg-accentDark text-white px-6 py-2 rounded-xl text-sm font-bold transition shadow-lg shadow-accent/30">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAYMENT MODAL -->
+    <div x-show="isPaymentModalOpen" class="fixed inset-0 z-[60] flex items-end md:items-center justify-center" x-cloak @keydown.escape.window="closePaymentModal()">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="closePaymentModal()" x-transition.opacity></div>
+        <div class="relative bg-card w-full md:max-w-md md:rounded-2xl rounded-t-2xl border-t md:border border-white/10 max-h-[90vh] overflow-y-auto animate-slide-up">
+            <div class="sticky top-0 bg-card z-10 px-5 py-4 border-b border-white/5 flex items-center justify-between"><h3 class="text-base font-bold text-white">Checkout</h3><button @click="closePaymentModal()" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white transition"><i class="fa-solid fa-xmark"></i></button></div>
+            <div class="p-5 space-y-5">
+                <template x-if="selectedProductForPayment">
+                    <div class="flex gap-3 items-start bg-bg p-3 rounded-xl border border-white/5">
+                        <img :src="selectedProductForPayment.image" class="w-14 h-14 rounded-xl object-cover bg-black shrink-0">
+                        <div class="flex-1 min-w-0"><h4 class="text-sm font-bold text-white truncate" x-text="selectedProductForPayment.name"></h4><span class="text-[10px] text-gray-400" x-text="selectedProductForPayment.category"></span><div class="mt-2 flex items-center justify-between"><span class="text-xs text-gray-500">Harga Satuan:</span><span class="text-xs text-gray-300" x-text="formatRupiah(selectedProductForPayment.price)"></span></div></div>
+                    </div>
+                </template>
+                
+                <div class="bg-bg p-3 rounded-xl border border-white/5">
+                     <div class="flex gap-2 mb-2">
+                        <input x-model="appliedVoucher" type="text" placeholder="Punya Kode Voucher?" class="flex-1 bg-card border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:border-accent focus:outline-none">
+                        <button @click="checkVoucher" class="bg-accent text-white px-3 rounded-lg text-xs font-semibold hover:bg-accentDark transition">Pakai</button>
+                     </div>
+                     <div x-show="discountMessage" class="text-[10px] text-green-400" x-text="discountMessage"></div>
+                </div>
+
+                <div class="bg-bg p-3 rounded-xl border border-white/5 flex items-center justify-between"><span class="text-sm font-medium text-gray-300">Jumlah Produk</span><div class="flex items-center gap-4 bg-card rounded-lg px-3 py-1 border border-white/5"><button @click="if(checkoutQuantity > 1) checkoutQuantity--" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white transition active:scale-90"><i class="fa-solid fa-minus text-xs"></i></button><span class="text-lg font-bold text-white w-6 text-center" x-text="checkoutQuantity"></span><button @click="checkoutQuantity++" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white transition active:scale-90"><i class="fa-solid fa-plus text-xs"></i></button></div></div>
+                <div class="flex items-center justify-between px-2"><span class="text-sm text-gray-400">Total Harga</span><span class="text-xl font-black text-accentLight" x-text="formatRupiah(calculateTotal())"></span></div>
+                <div><label class="text-xs text-gray-400 mb-2 block font-semibold">Metode Pembayaran</label><div class="grid grid-cols-3 gap-2"><template x-for="m in ['Dana', 'GoPay', 'SeaBank', 'BCA', 'QRIS']" :key="m"><button @click="paymentForm.method = m" :class="paymentForm.method === m ? 'border-accent bg-accent/10 text-white' : 'border-white/5 text-gray-400 hover:border-white/20'" class="border rounded-xl p-2.5 flex flex-col items-center justify-center gap-1.5 transition h-16"><i :class="{'fa-wallet': ['Dana','GoPay'].includes(m), 'fa-building-columns': m==='BCA', 'fa-landmark': m==='SeaBank', 'fa-qrcode': m==='QRIS'}" class="fa-solid text-lg"></i><span class="text-[10px] font-medium" x-text="m"></span></button></template></div></div>
+                <div x-show="paymentForm.method" class="bg-bg p-4 rounded-xl border border-white/5 text-center animate-fade-in relative overflow-hidden">
+                    <div x-show="copyStatus" class="absolute top-2 right-2 bg-green-500 text-white text-[10px] px-2 py-1 rounded animate-fade-in z-10" x-text="copyStatus"></div>
+                    
+                    <template x-if="paymentForm.method === 'QRIS'">
+                        <div class="flex flex-col items-center">
+                            <div class="relative group cursor-pointer" @click="viewQris()">
+                                <img x-show="paymentSettings.qrisImage" :src="paymentSettings.qrisImage" class="w-44 mx-auto rounded-lg mb-2 bg-white p-2 shadow-lg transition group-hover:scale-105">
+                                <div x-show="paymentSettings.qrisImage" class="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                                    <i class="fa-solid fa-expand text-white text-xl"></i>
+                                </div>
+                            </div>
+                            <p x-show="!paymentSettings.qrisImage" class="text-yellow-400 text-xs">QRIS belum tersedia</p>
+                            <button x-show="paymentSettings.qrisImage" @click="viewQris()" class="mt-2 text-xs text-accentLight hover:text-white font-semibold flex items-center gap-1">
+                                <i class="fa-solid fa-eye"></i> Lihat QRIS Besar
+                            </button>
+                            <p class="text-[10px] text-gray-500 mt-1" x-text="paymentSettings.qrisDesc || 'Scan pakai e-wallet manapun'"></p>
+                        </div>
+                    </template>
+                    
+                    <template x-if="paymentForm.method !== 'QRIS' && paymentForm.method">
+                        <div class="flex flex-col items-center">
+                            <p class="text-gray-400 text-xs mb-2">Transfer ke:</p>
+                            <div class="flex items-center gap-3 bg-card px-4 py-3 rounded-xl border border-white/10 w-full justify-center">
+                                <span class="text-white font-mono text-lg font-black select-all" x-text="paymentSettings[paymentForm.method.toLowerCase()] || '-'"></span>
+                                <button @click="copyToClipboard(paymentSettings[paymentForm.method.toLowerCase()])" class="bg-accent/20 text-accent p-2 rounded-lg hover:bg-accent/30 transition shrink-0" title="Salin Nomor"><i class="fa-regular fa-copy"></i></button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                
+                <div class="space-y-3">
+                    <div>
+                        <label class="form-label-admin">Nama Pengirim</label>
+                        <input x-model="paymentForm.senderName" type="text" placeholder="Nama Anda" class="w-full bg-bg border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-accent focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="form-label-admin">Nomor WhatsApp</label>
+                        <input x-model="paymentForm.reference" type="number" placeholder="08xxxxxxxxxx" class="w-full bg-bg border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-accent focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="form-label-admin">Catatan (opsional)</label>
+                        <textarea x-model="paymentForm.notes" placeholder="Pesan tambahan..." class="w-full bg-bg border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-accent focus:outline-none transition h-16 resize-none"></textarea>
+                    </div>
+                </div>
+
+                <button @click="confirmPayment()" :disabled="!paymentForm.method || !paymentForm.senderName || !paymentForm.reference" :class="(!paymentForm.method || !paymentForm.senderName || !paymentForm.reference) ? 'opacity-40 cursor-not-allowed' : 'shadow-lg shadow-green-600/20 active:scale-[0.98]'" class="w-full bg-green-600 text-white font-bold py-3.5 rounded-xl transition flex items-center justify-center gap-2 text-sm disabled:bg-gray-700"><i class="fa-brands fa-whatsapp text-lg"></i> Konfirmasi via WhatsApp</button>
+            </div><div class="h-6"></div>
+        </div>
+    </div>
+
+    <!-- PRODUCT DETAIL MODAL -->
+    <div x-show="isProductDetailOpen" class="fixed inset-0 z-[65] flex items-end md:items-center justify-center" x-cloak @keydown.escape.window="closeProductDetail()">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-md" @click="closeProductDetail()" x-transition.opacity></div>
+        <div class="relative bg-card w-full md:max-w-lg md:rounded-2xl rounded-t-2xl border-t md:border border-white/10 max-h-[90vh] overflow-y-auto animate-slide-up">
+            <button @click="closeProductDetail()" class="absolute top-4 right-4 z-10 w-8 h-8 bg-black/50 rounded-full text-white flex items-center justify-center hover:bg-accent transition"><i class="fa-solid fa-times text-sm"></i></button>
+            
+            <template x-if="selectedProduct">
+                <div class="p-5 space-y-5">
+                    <img :src="selectedProduct.image" class="w-full h-48 object-cover rounded-xl">
+                    
+                    <div>
+                        <h2 class="text-xl font-bold text-white mb-2" x-text="selectedProduct.name"></h2>
+                        <p class="text-sm text-gray-400" x-text="selectedProduct.description"></p>
+                    </div>
+
+                    <!-- Product Stats -->
+                    <div class="flex items-center gap-4 text-sm">
+                        <div class="flex items-center gap-1 bg-card px-3 py-1.5 rounded-lg border border-white/5">
+                            <i class="fa-solid fa-star text-yellow-400"></i>
+                            <span class="font-bold" x-text="selectedProduct.rating"></span>
+                        </div>
+                        <div class="flex items-center gap-1 bg-card px-3 py-1.5 rounded-lg border border-white/5">
+                            <i class="fa-solid fa-bag-shopping text-green-400"></i>
+                            <span class="font-bold" x-text="selectedProduct.sales"></span> <span class="text-xs text-gray-400">Terjual</span>
+                        </div>
+                    </div>
+
+                    <!-- Rating Summary -->
+                    <div class="bg-bg p-4 rounded-xl border border-white/5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm font-semibold text-white">Ulasan Pembeli</span>
+                        </div>
+                        
+                        <div class="space-y-3 max-h-48 overflow-y-auto">
+                            <template x-for="review in getProductReviews(selectedProduct.id)" :key="review.id">
+                                <div class="border-b border-white/5 pb-3 last:border-0">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-8 h-8 rounded-full avatar-placeholder flex items-center justify-center text-white font-bold text-xs" x-text="review.name.charAt(0).toUpperCase()"></div>
+                                            <span class="text-sm font-semibold text-white" x-text="review.name"></span>
+                                        </div>
+                                        <div class="flex items-center gap-0.5">
+                                            <template x-for="i in 5">
+                                                <i class="fa-solid fa-star text-xs" :class="i <= review.rating ? 'text-yellow-400' : 'text-gray-600'"></i>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-gray-300 mb-1" x-text="review.comment"></p>
+                                    <p class="text-[10px] text-gray-500" x-text="review.date"></p>
+                                </div>
+                            </template>
+                            <div x-show="getProductReviews(selectedProduct.id).length === 0" class="text-center py-4 text-gray-500 text-xs">
+                                Belum ada ulasan untuk produk ini
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-4 border-t border-white/5">
+                        <div>
+                            <p class="text-xs text-gray-400 mb-1">Harga</p>
+                            <p class="text-2xl font-black text-accentLight" x-text="formatRupiah(selectedProduct.price)"></p>
+                        </div>
+                        <button @click="openPaymentModal(selectedProduct); closeProductDetail()" class="bg-accent hover:bg-accentDark text-white px-6 py-3 rounded-xl font-bold transition shadow-lg shadow-accent/30 flex items-center gap-2">
+                            <i class="fa-solid fa-bag-shopping"></i> Beli Sekarang
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- QRIS PREVIEW MODAL (SHARED FOR ADMIN & CHECKOUT) -->
+    <div x-show="showQrisModal" class="fixed inset-0 z-[90] flex items-center justify-center px-4 qris-modal-bg" x-cloak @click="showQrisModal = false">
+        <div class="relative w-full max-w-md animate-fade-in" @click.stop>
+            <button @click="showQrisModal = false" class="absolute -top-10 right-0 text-white text-2xl hover:text-accent transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="bg-white p-2 rounded-2xl shadow-2xl shadow-accent/20">
+                <img :src="paymentSettings.qrisImage" class="w-full h-auto rounded-xl">
+            </div>
+            <p class="text-center text-white mt-4 text-sm font-medium drop-shadow-md" x-text="paymentSettings.qrisDesc || 'Scan QRIS ini untuk pembayaran'"></p>
+        </div>
+    </div>
+
+    <!-- JS LOGIC -->
+    <script>
+        function storeApp() {
+            return {
+                isAdmin: false,
+                adminTab: 'general',
+                activeTab: 'home',
+                filterCategory: 'all',
+                searchQuery: '',
+                discountMessage: '',
+                activeDiscount: 0,
+                appliedVoucher: '',
+                showReviews: false,
+                isProductDetailOpen: false,
+                selectedProduct: null,
+                showQrisModal: false, // New State
+                toast: { message: '', show: false, type: 'success' }, // Toast State
+                
+                products: [],
+                vouchers: [],
+                reviews: [],
+                
+                // New Product State
+                newProduct: { name: '', category: 'bot', price: '', image: '', description: '', rating: 5, sales: 0 },
+                editingProductId: null,
+
+                // New Voucher State
+                newVoucher: { code: '', discount: '' },
+
+                // New Review State
+                newReview: { name: '', productId: '', rating: 5, comment: '', date: '' },
+                editingReviewId: null,
+
+                isPaymentModalOpen: false,
+                selectedProductForPayment: null,
+                checkoutQuantity: 1,
+                copyStatus: '',
+                paymentForm: { method: '', senderName: '', reference: '', notes: '' },
+                
+                showWelcomePopup: false,
+                dontShowAgain: false,
+                
+                showPasswordModal: false,
+                passwordInput: '',
+                passwordError: false,
+                passwordForm: { old: '', new: '', confirm: '' },
+                
+                settings: {
+                    marqueeText: 'Follow channel untuk update & promo: wa.me/channel/luthfi',
+                    heroImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1600&auto=format&fit=crop',
+                    shopName: 'Luthfi Shop',
+                    shopTagline: 'Praktis, Otomatis, Dan Cepat',
+                    adminPassword: 'admin123'
+                },
+
+                popupSettings: {
+                    title: 'Welcome Guys',
+                    message: 'Dikulum dikunyah, asalamualaikum semuanyaa',
+                    image: 'https://images.unsplash.com/photo-1614726365723-49cfae9278b7?q=80&w=800&auto=format&fit=crop'
+                },
+
+                paymentSettings: {
+                    dana: '0812-3456-7890 a.n Luthfi',
+                    gopay: '0812-3456-7890 a.n Luthfi',
+                    seabank: '9012-3456-7890 a.n Luthfi',
+                    bca: '1234-5678-9012 a.n Luthfi',
+                    qrisImage: '',
+                    qrisDesc: 'Scan pakai e-wallet manapun'
+                },
+
+                // --- TOAST FUNCTION ---
+                showToast(msg, type = 'success') {
+                    this.toast.message = msg;
+                    this.toast.type = type;
+                    this.toast.show = true;
+                    setTimeout(() => {
+                        this.toast.show = false;
+                    }, 3000);
+                },
+
+                get filteredProducts() {
+                    let result = this.products;
+                    if (this.filterCategory !== 'all') result = result.filter(p => p.category === this.filterCategory);
+                    if (this.searchQuery) {
+                        const q = this.searchQuery.toLowerCase();
+                        result = result.filter(p => p.name.toLowerCase().includes(q) || (p.description && p.description.toLowerCase().includes(q)));
+                    }
+                    return result;
+                },
+
+                get allReviews() {
+                    return [...this.reviews].sort((a, b) => b.id - a.id);
+                },
+
+                initApp() {
+                    AOS.init({ once: true, offset: 30, duration: 600 });
+                    
+                    const savedSettings = localStorage.getItem('luthfi_settings');
+                    if (savedSettings) this.settings = { ...this.settings, ...JSON.parse(savedSettings) };
+
+                    const savedPopup = localStorage.getItem('luthfi_popup');
+                    if (savedPopup) this.popupSettings = JSON.parse(savedPopup);
+
+                    const noPopup = localStorage.getItem('luthfi_no_popup');
+                    if (!noPopup) {
+                        setTimeout(() => this.showWelcomePopup = true, 500);
+                    }
+
+                    const sp = localStorage.getItem('luthfi_products');
+                    this.products = sp ? JSON.parse(sp) : [
+                        { id: 1, name: 'WhatsApp Bot Basic', category: 'bot', price: 150000, description: 'Auto reply, menu list, welcome message. Cocok UMKM.', image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400&q=80', rating: 4.8, sales: 125 },
+                        { id: 2, name: 'Jasa Fix Bug Bot', category: 'service', price: 50000, description: 'Perbaikan error script bot. Pengerjaan cepat.', image: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=400&q=80', rating: 4.5, sales: 89 },
+                        { id: 3, name: 'Premium Feature Add-on', category: 'feature', price: 100000, description: 'Database, AI Integration, Payment Gateway.', image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&q=80', rating: 5.0, sales: 210 }
+                    ];
+                    
+                    const sv = localStorage.getItem('luthfi_vouchers');
+                    this.vouchers = sv ? JSON.parse(sv) : [{code: 'WELCOME10', discount: 10}];
+
+                    const sr = localStorage.getItem('luthfi_reviews');
+                    this.reviews = sr ? JSON.parse(sr) : [
+                        { id: 1, productId: 1, name: 'Ahmad Rizki', rating: 5, comment: 'Bot WhatsAppnya sangat membantu untuk bisnis saya. Auto replynya cepat dan fiturnya lengkap!', date: '2 hari yang lalu' },
+                        { id: 2, productId: 1, name: 'Budi Santoso', rating: 5, comment: 'Pelayanan mantap, botnya works perfectly. Recommended seller!', date: '5 hari yang lalu' },
+                        { id: 3, productId: 2, name: 'Citra Dewi', rating: 4, comment: 'Bug bot saya berhasil diperbaiki dengan cepat. Terima kasih!', date: '1 minggu yang lalu' },
+                        { id: 4, productId: 3, name: 'Dedi Pratama', rating: 5, comment: 'Fitur database dan payment gateway sangat berguna. Worth it!', date: '2 minggu yang lalu' }
+                    ];
+                    
+                    const ps = localStorage.getItem('luthfi_payment');
+                    if (ps) this.paymentSettings = { ...this.paymentSettings, ...JSON.parse(ps) };
+                    
+                    this.saveData();
+                },
+
+                // --- QRIS VIEW FUNCTION ---
+                viewQris() {
+                    if(this.paymentSettings.qrisImage) {
+                        this.showQrisModal = true;
+                    } else {
+                        this.showToast('QRIS belum tersedia!', 'error');
+                    }
+                },
+
+                getProductNameById(id) {
+                    const prod = this.products.find(p => p.id == id);
+                    return prod ? prod.name : 'Produk Tidak Ditemukan';
+                },
+
+                getProductReviews(productId) {
+                    return this.reviews.filter(r => r.productId == productId);
+                },
+
+                openProductDetail(product) {
+                    this.selectedProduct = product;
+                    this.isProductDetailOpen = true;
+                },
+
+                closeProductDetail() {
+                    this.isProductDetailOpen = false;
+                    this.selectedProduct = null;
+                },
+
+                openPasswordModal() {
+                    this.showPasswordModal = true;
+                    this.passwordInput = '';
+                    this.passwordError = false;
+                    setTimeout(() => {
+                        const input = document.querySelector('[x-model="passwordInput"]');
+                        if (input) input.focus();
+                    }, 100);
+                },
+                closePasswordModal() {
+                    this.showPasswordModal = false;
+                    this.passwordInput = '';
+                    this.passwordError = false;
+                },
+                verifyPassword() {
+                    if (this.passwordInput === this.settings.adminPassword) {
+                        this.isAdmin = true;
+                        this.closePasswordModal();
+                        this.showToast('Selamat datang Admin!', 'success');
+                        setTimeout(() => AOS.refresh(), 100);
+                    } else {
+                        this.passwordError = true;
+                        this.passwordInput = '';
+                        this.showToast('Password salah!', 'error');
+                        setTimeout(() => this.passwordError = false, 500);
+                    }
+                },
+                exitAdmin() {
+                    this.isAdmin = false;
+                    this.adminTab = 'general';
+                    this.passwordForm = { old: '', new: '', confirm: '' };
+                    this.cancelEditProduct();
+                    this.cancelEditReview();
+                    this.showToast('Berhasil keluar dari Admin', 'info');
+                },
+                changePassword() {
+                    if (!this.passwordForm.old || !this.passwordForm.new || !this.passwordForm.confirm) {
+                        this.showToast('Semua field harus diisi!', 'error');
+                        return;
+                    }
+                    if (this.passwordForm.old !== this.settings.adminPassword) {
+                        this.showToast('Password lama salah!', 'error');
+                        return;
+                    }
+                    if (this.passwordForm.new.length < 4) {
+                        this.showToast('Password baru minimal 4 karakter!', 'error');
+                        return;
+                    }
+                    if (this.passwordForm.new !== this.passwordForm.confirm) {
+                        this.showToast('Konfirmasi password tidak cocok!', 'error');
+                        return;
+                    }
+                    this.settings.adminPassword = this.passwordForm.new;
+                    this.saveData();
+                    this.passwordForm = { old: '', new: '', confirm: '' };
+                    this.showToast('Password berhasil diubah!', 'success');
+                },
+
+                toggleAdmin() { this.isAdmin = !this.isAdmin; setTimeout(() => AOS.refresh(), 100); },
+                scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); },
+
+                saveSettings() {
+                    localStorage.setItem('luthfi_settings', JSON.stringify(this.settings));
+                    this.showToast('Pengaturan Identitas & Banner Disimpan!', 'success');
+                },
+
+                savePopupSettings() {
+                    localStorage.setItem('luthfi_popup', JSON.stringify(this.popupSettings));
+                    this.showToast('Pengaturan Popup Disimpan!', 'success');
+                },
+
+                resetPopupPreference() {
+                    localStorage.removeItem('luthfi_no_popup');
+                    this.showToast('Preferensi direset. Popup akan muncul saat refresh.', 'info');
+                    location.reload();
+                },
+
+                closeWelcomePopup() {
+                    if (this.dontShowAgain) {
+                        localStorage.setItem('luthfi_no_popup', 'true');
+                    }
+                    this.showWelcomePopup = false;
+                },
+
+                // --- PRODUCT FUNCTIONS ---
+                addProduct() {
+                    const prodData = { ...this.newProduct, rating: parseFloat(this.newProduct.rating) || 5, sales: parseInt(this.newProduct.sales) || 0 };
+                    
+                    if (this.editingProductId) {
+                        const index = this.products.findIndex(p => p.id === this.editingProductId);
+                        if (index !== -1) {
+                            this.products[index] = { ...this.products[index], ...prodData };
+                            this.showToast('Produk berhasil diupdate!', 'success');
+                        }
+                        this.cancelEditProduct();
+                    } else {
+                        this.products.push({ id: Date.now(), ...prodData });
+                        this.newProduct = { name: '', category: 'bot', price: '', image: '', description: '', rating: 5, sales: 0 };
+                        this.showToast('Produk berhasil ditambahkan!', 'success');
+                    }
+                    this.saveData();
+                },
+                editProduct(prod) {
+                    this.newProduct = { ...prod };
+                    this.editingProductId = prod.id;
+                    this.adminTab = 'products';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                },
+                cancelEditProduct() {
+                    this.editingProductId = null;
+                    this.newProduct = { name: '', category: 'bot', price: '', image: '', description: '', rating: 5, sales: 0 };
+                },
+                deleteProduct(i) { 
+                    if(confirm('Hapus produk ini?')) { 
+                        this.products.splice(i, 1); 
+                        this.saveData(); 
+                        this.showToast('Produk dihapus', 'info');
+                    } 
+                },
+
+                // --- VOUCHER FUNCTIONS ---
+                addVoucher() { 
+                    this.vouchers.push({...this.newVoucher}); 
+                    this.saveData(); 
+                    this.newVoucher = { code: '', discount: '' }; 
+                    this.showToast('Voucher berhasil ditambahkan!', 'success');
+                },
+                deleteVoucher(i) { 
+                    this.vouchers.splice(i, 1); 
+                    this.saveData(); 
+                    this.showToast('Voucher dihapus', 'info');
+                },
+
+                // --- REVIEW FUNCTIONS ---
+                addReview() {
+                    const reviewData = { 
+                        ...this.newReview, 
+                        productId: parseInt(this.newReview.productId),
+                        rating: parseInt(this.newReview.rating) || 5,
+                        date: this.newReview.date || 'Baru saja'
+                    };
+
+                    if (this.editingReviewId) {
+                        const index = this.reviews.findIndex(r => r.id === this.editingReviewId);
+                        if (index !== -1) {
+                            this.reviews[index] = { ...this.reviews[index], ...reviewData };
+                            this.showToast('Ulasan berhasil diupdate!', 'success');
+                        }
+                        this.cancelEditReview();
+                    } else {
+                        this.reviews.push({ id: Date.now(), ...reviewData });
+                        this.newReview = { name: '', productId: '', rating: 5, comment: '', date: '' };
+                        this.showToast('Ulasan berhasil ditambahkan!', 'success');
+                    }
+                    this.saveData();
+                },
+                editReview(review) {
+                    this.newReview = { ...review, productId: review.productId.toString() };
+                    this.editingReviewId = review.id;
+                    this.adminTab = 'reviews';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                },
+                cancelEditReview() {
+                    this.editingReviewId = null;
+                    this.newReview = { name: '', productId: '', rating: 5, comment: '', date: '' };
+                },
+                deleteReview(index) {
+                    if(confirm('Hapus ulasan ini?')) {
+                        this.reviews.splice(index, 1);
+                        this.saveData();
+                        this.showToast('Ulasan dihapus', 'info');
+                    }
+                },
+
+                savePaymentSettings() { 
+                    localStorage.setItem('luthfi_payment', JSON.stringify(this.paymentSettings)); 
+                    this.showToast('Pengaturan Pembayaran & QRIS Tersimpan!', 'success');
+                },
+
+                checkVoucher() {
+                    const found = this.vouchers.find(v => v.code.toUpperCase() === this.appliedVoucher.toUpperCase());
+                    if (found) { 
+                        this.activeDiscount = parseInt(found.discount); 
+                        this.discountMessage = `Voucher ${found.code} aktif! Diskon ${found.discount}%`; 
+                        this.showToast('Voucher berhasil dipakai!', 'success');
+                    } else { 
+                        this.activeDiscount = 0; 
+                        this.discountMessage = 'Kode tidak valid'; 
+                        this.showToast('Kode voucher salah!', 'error');
+                        setTimeout(() => this.discountMessage = '', 2500); 
+                    }
+                },
+
+                calculateTotal() {
+                    if (!this.selectedProductForPayment) return 0;
+                    const subtotal = this.selectedProductForPayment.price * this.checkoutQuantity;
+                    const discountAmount = subtotal * (this.activeDiscount / 100);
+                    return subtotal - discountAmount;
+                },
+
+                copyToClipboard(text) {
+                    if (!text) return;
+                    navigator.clipboard.writeText(text).then(() => {
+                        this.copyStatus = 'Tersalin!';
+                        this.showToast('Nomor berhasil disalin!', 'success');
+                        setTimeout(() => this.copyStatus = '', 2000);
+                    }).catch(err => { console.error('Failed to copy: ', err); });
+                },
+
+                openPaymentModal(prod) { 
+                    this.selectedProductForPayment = prod; 
+                    this.paymentForm = { method: '', senderName: '', reference: '', notes: '' }; 
+                    this.checkoutQuantity = 1;
+                    this.isPaymentModalOpen = true; 
+                },
+                closePaymentModal() { this.isPaymentModalOpen = false; },
+
+                confirmPayment() {
+                    const p = this.selectedProductForPayment;
+                    const total = this.calculateTotal();
+                    
+                    const msg = `*✨ KONFIRMASI ORDER BARU ✨*\n` +
+                                `================================\n` +
+                                `📦 *Detail Produk:*\n` +
+                                `Nama: ${p.name}\n` +
+                                `Kategori: ${p.category || '-'}\n` +
+                                `Qty: ${this.checkoutQuantity}\n` +
+                                `Harga Satuan: ${this.formatRupiah(p.price)}\n\n` +
+                                `💰 *Total Pembayaran: ${this.formatRupiah(total)}*\n` +
+                                (this.activeDiscount > 0 ? `_(Diskon ${this.activeDiscount}% diterapkan)_\n\n` : '\n') +
+                                `👤 *Data Pembeli:*\n` +
+                                `Nama: ${this.paymentForm.senderName}\n` +
+                                `No. WhatsApp: ${this.paymentForm.reference}\n` +
+                                `Metode Bayar: ${this.paymentForm.method}\n` +
+                                (this.paymentForm.notes ? `Catatan: ${this.paymentForm.notes}\n` : '') +
+                                `================================\n` +
+                                `Mohon diproses segera. Terima kasih! `;
+                    
+                    window.open(`https://wa.me/6285819544329?text=${encodeURIComponent(msg)}`, '_blank');
+                    this.closePaymentModal();
+                },
+
+                saveData() {
+                    localStorage.setItem('luthfi_products', JSON.stringify(this.products));
+                    localStorage.setItem('luthfi_vouchers', JSON.stringify(this.vouchers));
+                    localStorage.setItem('luthfi_reviews', JSON.stringify(this.reviews));
+                    localStorage.setItem('luthfi_settings', JSON.stringify(this.settings));
+                    localStorage.setItem('luthfi_popup', JSON.stringify(this.popupSettings));
+                },
+
+                formatRupiah(n) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n); },
+                calculatePrice(price) { 
+                    const discountAmount = price * (this.activeDiscount / 100);
+                    return price - discountAmount;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
