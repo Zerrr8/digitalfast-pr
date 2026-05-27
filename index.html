@@ -412,6 +412,7 @@
                                 <option value="bot">WhatsApp Bot</option>
                                 <option value="service">Jasa Service</option>
                                 <option value="feature">Add Feature</option>
+                                <option value="lainnya">Lainnya</option>
                             </select>
                         </div>
                         <div>
@@ -714,6 +715,7 @@
                 <button @click="filterCategory = 'bot'" :class="filterCategory === 'bot' ? 'bg-accent text-white border-accent shadow-lg shadow-accent/30' : 'bg-card text-gray-400 border-white/5'" class="px-5 py-2.5 rounded-xl border text-xs font-semibold whitespace-nowrap transition flex items-center gap-2 shrink-0"><i class="fa-brands fa-whatsapp text-[10px]"></i> Bot WA</button>
                 <button @click="filterCategory = 'service'" :class="filterCategory === 'service' ? 'bg-accent text-white border-accent shadow-lg shadow-accent/30' : 'bg-card text-gray-400 border-white/5'" class="px-5 py-2.5 rounded-xl border text-xs font-semibold whitespace-nowrap transition flex items-center gap-2 shrink-0"><i class="fa-solid fa-wrench text-[10px]"></i> Jasa Service</button>
                 <button @click="filterCategory = 'feature'" :class="filterCategory === 'feature' ? 'bg-accent text-white border-accent shadow-lg shadow-accent/30' : 'bg-card text-gray-400 border-white/5'" class="px-5 py-2.5 rounded-xl border text-xs font-semibold whitespace-nowrap transition flex items-center gap-2 shrink-0"><i class="fa-solid fa-puzzle-piece text-[10px]"></i> Add Feature</button>
+                <button @click="filterCategory = 'lainnya'" :class="filterCategory === 'lainnya' ? 'bg-accent text-white border-accent shadow-lg shadow-accent/30' : 'bg-card text-gray-400 border-white/5'" class="px-5 py-2.5 rounded-xl border text-xs font-semibold whitespace-nowrap transition flex items-center gap-2 shrink-0"><i class="fa-solid fa-folder text-[10px]"></i> Lainnya</button>
             </div>
         </div>
 
@@ -1088,7 +1090,7 @@
                     heroImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1600&auto=format&fit=crop',
                     shopName: 'Luthfi Shop',
                     shopTagline: 'Praktis, Otomatis, Dan Cepat',
-                    adminPassword: 'admin123'
+                    adminPassword: 'zerlutgin' // Updated password
                 },
 
                 popupSettings: {
